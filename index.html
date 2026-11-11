@@ -1,0 +1,1376 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>999感冒灵 ×《后会友期》马天宇抖音专场直播企划与数据看板</title>
+    <!-- 引入 ECharts 核心库及 WordCloud 插件 -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts-wordcloud@2.1.0/dist/echarts-wordcloud.min.js"></script>
+    <style>
+        :root {
+            --bg-snow: #F9F8F3;          /* 暖雪羊绒白 */
+            --card-white: #FFFFFF;       /* 冰川纯白 */
+            --forest-deep: #1E3F2B;      /* 999深松绿 */
+            --meadow-green: #3A6B4C;     /* 森林草地绿 */
+            --grass-warm: #7FA96B;       /* 暖阳草甸绿 */
+            --sun-gold: #D49B54;         /* 落日暖金 */
+            --glacier-blue: #6A92A4;     /* 雪山灰蓝 */
+            --text-main: #233529;        /* 深林墨色 */
+            --text-sub: #627568;         /* 苔藓灰绿 */
+            --border-soft: #E3EBE0;      /* 柔雾浅绿边 */
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(160deg, #F3F7F0 0%, #F9F8F3 52%, #F1EFE8 100%);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 32px 24px 60px 24px;
+        }
+
+        .container-wrap {
+            max-width: 1420px;
+            margin: 0 auto;
+        }
+
+        /* 顶部高定雪山草地横幅 + 灵仔IP徽章 */
+        .header-banner {
+            background: linear-gradient(125deg, #183523 0%, #2E5B3E 55%, #6E9E63 100%);
+            border-radius: 26px;
+            padding: 36px 46px;
+            color: #FAF9F5;
+            box-shadow: 0 18px 42px rgba(30, 63, 43, 0.16);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 28px;
+            margin-bottom: 26px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header-banner::after {
+            content: "";
+            position: absolute;
+            right: -50px;
+            bottom: -70px;
+            width: 420px;
+            height: 260px;
+            background: radial-gradient(circle, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0) 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .header-left { flex: 1; z-index: 1; }
+
+        .header-left h1 {
+            font-size: 2.15rem;
+            font-weight: 800;
+            letter-spacing: 1.2px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        .badge-tag {
+            font-size: 0.86rem;
+            background: rgba(212, 155, 84, 0.32);
+            border: 1px solid rgba(255, 243, 224, 0.55);
+            color: #FFF7EB;
+            padding: 5px 15px;
+            border-radius: 999px;
+            font-weight: 600;
+        }
+
+        .header-left .theme-line {
+            font-size: 1.15rem;
+            color: #FFF3DC;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .header-left p {
+            color: #D6E7DA;
+            font-size: 0.96rem;
+            line-height: 1.5;
+        }
+
+        .header-ip-badge {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(10px);
+            padding: 14px 20px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.24);
+            z-index: 1;
+            flex-shrink: 0;
+        }
+
+        .header-ip-badge img {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #FFF6E9;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+        }
+
+        .header-ip-text {
+            font-size: 0.88rem;
+            line-height: 1.5;
+            color: #F4F9F5;
+        }
+        .header-ip-text b {
+            display: block;
+            font-size: 1.02rem;
+            color: #FFE6B8;
+            margin-bottom: 2px;
+        }
+
+        /* 导航栏：数据面板放第一个 */
+        .nav-tabs {
+            display: flex;
+            gap: 14px;
+            margin-bottom: 26px;
+            flex-wrap: wrap;
+        }
+
+        .nav-tab {
+            background: var(--card-white);
+            border: 1px solid var(--border-soft);
+            color: var(--text-sub);
+            padding: 14px 26px;
+            border-radius: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            font-size: 1.02rem;
+            box-shadow: 0 4px 14px rgba(30, 63, 43, 0.04);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-tab:hover {
+            background: #ECF3ED;
+            color: var(--forest-deep);
+            transform: translateY(-2px);
+        }
+
+        .nav-tab.active {
+            background: var(--forest-deep);
+            color: #FFFFFF;
+            border-color: var(--forest-deep);
+            box-shadow: 0 8px 20px rgba(30, 63, 43, 0.22);
+        }
+
+        /* KPI 核心指标行 */
+        .kpi-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 28px;
+        }
+
+        .kpi-card {
+            background: var(--card-white);
+            border-radius: 18px;
+            padding: 22px 24px;
+            border: 1px solid var(--border-soft);
+            box-shadow: 0 8px 24px rgba(35, 53, 41, 0.04);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s ease;
+        }
+        .kpi-card:hover { transform: translateY(-3px); }
+
+        .kpi-card::before {
+            content: "";
+            position: absolute; left: 0; top: 0; bottom: 0; width: 6px;
+            background: var(--meadow-green);
+        }
+        .kpi-card.gold::before { background: var(--sun-gold); }
+        .kpi-card.glacier::before { background: var(--glacier-blue); }
+        .kpi-card.grass::before { background: var(--grass-warm); }
+
+        .kpi-label { font-size: 0.88rem; color: var(--text-sub); margin-bottom: 8px; font-weight: 600; }
+        .kpi-value { font-size: 1.95rem; font-weight: 800; color: var(--forest-deep); margin-bottom: 6px; }
+        .kpi-desc { font-size: 0.82rem; color: #7E8F83; line-height: 1.4; }
+
+        /* 切换容器 */
+        .section-container { display: none; }
+        .section-container.active { display: block; animation: fadeIn 0.3s ease; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 网格系统 */
+        .grid-12 {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 24px;
+        }
+
+        .col-5 { grid-column: span 5; }
+        .col-6 { grid-column: span 6; }
+        .col-7 { grid-column: span 7; }
+        .col-12 { grid-column: span 12; }
+
+        .card {
+            background: var(--card-white);
+            border-radius: 22px;
+            padding: 26px 28px;
+            border: 1px solid var(--border-soft);
+            box-shadow: 0 10px 30px rgba(35, 53, 41, 0.05);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+            border-bottom: 1px solid #EEF3ED;
+            padding-bottom: 12px;
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: var(--forest-deep);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-subtitle { font-size: 0.85rem; color: var(--text-sub); margin-top: 4px; }
+        .card-pill {
+            font-size: 0.76rem;
+            padding: 4px 12px;
+            border-radius: 999px;
+            background: #EFF5EE;
+            color: var(--meadow-green);
+            font-weight: 700;
+            white-space: nowrap;
+        }
+        .card-pill.gold { background: #FDF5E8; color: #B87B31; }
+
+        .chart-box { width: 100%; height: 370px; }
+        .chart-box-tall { width: 100%; height: 460px; }
+
+        /* 灵仔 IP 与产品视觉画廊卡片 */
+        .ip-gallery {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 22px;
+            margin-top: 8px;
+        }
+
+        .ip-visual-card {
+            background: #F8FAF7;
+            border-radius: 18px;
+            overflow: hidden;
+            border: 1px solid #E2ECE0;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            display: flex;
+            flex-direction: column;
+        }
+        .ip-visual-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 14px 28px rgba(30, 63, 43, 0.12);
+        }
+
+        .ip-visual-img-wrap {
+            width: 100%;
+            height: 270px;
+            overflow: hidden;
+            position: relative;
+            background: #233529;
+        }
+
+        .ip-visual-img-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+        .ip-visual-card:hover .ip-visual-img-wrap img {
+            transform: scale(1.04);
+        }
+
+        .ip-floating-tag {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: rgba(30, 63, 43, 0.88);
+            color: #FFF;
+            padding: 4px 12px;
+            border-radius: 999px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255,255,255,0.25);
+        }
+
+        .ip-visual-body {
+            padding: 18px 20px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .ip-visual-title {
+            font-size: 1.08rem;
+            font-weight: 800;
+            color: var(--forest-deep);
+            margin-bottom: 6px;
+        }
+
+        .ip-visual-desc {
+            font-size: 0.88rem;
+            color: #4A5D50;
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+
+        .ip-mech-box {
+            background: #EDF4EB;
+            border-left: 4px solid var(--meadow-green);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.83rem;
+            color: var(--forest-deep);
+            font-weight: 600;
+        }
+
+        /* 00 三阶货盘策略卡片 */
+        .tier-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .tier-card {
+            background: linear-gradient(180deg, #FFFFFF 0%, #F9FBF8 100%);
+            border: 1px solid #DCE7DA;
+            border-radius: 18px;
+            padding: 22px;
+            position: relative;
+        }
+
+        .tier-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        .tier-1 .tier-badge { background: #1E3F2B; color: #FFF; }
+        .tier-2 .tier-badge { background: #D49B54; color: #FFF; }
+        .tier-3 .tier-badge { background: #6A92A4; color: #FFF; }
+
+        .tier-card h4 {
+            font-size: 1.12rem;
+            color: var(--forest-deep);
+            margin-bottom: 10px;
+        }
+
+        .tier-card ul {
+            padding-left: 18px;
+            font-size: 0.9rem;
+            line-height: 1.65;
+            color: #3B4D41;
+        }
+        .tier-card li { margin-bottom: 8px; }
+
+        /* 01 空间视觉复刻区 */
+        .scene-banner {
+            background: linear-gradient(130deg, #1E3F2B 0%, #345E44 65%, #557E56 100%);
+            color: #FFF;
+            border-radius: 22px;
+            padding: 30px 34px;
+            display: grid;
+            grid-template-columns: 1.3fr 1fr;
+            gap: 28px;
+            align-items: center;
+        }
+
+        .scene-banner h3 {
+            font-size: 1.45rem;
+            color: #FFF7E8;
+            margin-bottom: 8px;
+        }
+
+        .scene-sub {
+            color: #FAD89E;
+            font-size: 1.02rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .scene-list {
+            list-style: none;
+            padding: 0;
+        }
+        .scene-list li {
+            margin-bottom: 10px;
+            font-size: 0.93rem;
+            line-height: 1.65;
+            color: #E6F0E8;
+            padding-left: 14px;
+            border-left: 3px solid #8FB973;
+        }
+
+        .hook-box {
+            background: rgba(255, 255, 255, 0.11);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 16px;
+            padding: 20px 22px;
+            backdrop-filter: blur(8px);
+        }
+        .hook-box h4 {
+            color: #FFE4B5;
+            font-size: 1.05rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .hook-box p {
+            color: #F8FAF7;
+            font-size: 0.92rem;
+            line-height: 1.68;
+        }
+
+        /* 02 四大互动点位精装卡片 */
+        .point-card {
+            background: #FFFFFF;
+            border-radius: 20px;
+            padding: 26px 28px;
+            border: 1px solid var(--border-soft);
+            box-shadow: 0 8px 26px rgba(35, 53, 41, 0.05);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .point-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 2px solid #EFF4EE;
+            padding-bottom: 12px;
+        }
+
+        .point-num {
+            background: var(--forest-deep);
+            color: #FFF;
+            font-weight: 800;
+            font-size: 0.85rem;
+            padding: 5px 12px;
+            border-radius: 8px;
+        }
+        .point-num.gold { background: var(--sun-gold); }
+        .point-num.glacier { background: var(--glacier-blue); }
+        .point-num.meadow { background: var(--meadow-green); }
+
+        .point-title {
+            font-size: 1.16rem;
+            font-weight: 800;
+            color: var(--forest-deep);
+            flex: 1;
+        }
+
+        .point-data-bar {
+            background: #F4F8F3;
+            border-radius: 10px;
+            padding: 9px 14px;
+            font-size: 0.84rem;
+            color: #2D5A3C;
+            font-weight: 600;
+        }
+
+        .point-steps {
+            padding-left: 18px;
+            font-size: 0.92rem;
+            line-height: 1.68;
+            color: #36483C;
+        }
+        .point-steps li { margin-bottom: 8px; }
+
+        .point-mech-footer {
+            margin-top: auto;
+            background: linear-gradient(90deg, #FDF8EE 0%, #F5F9F4 100%);
+            border: 1px solid #E8DFC8;
+            border-radius: 12px;
+            padding: 11px 14px;
+            font-size: 0.86rem;
+            color: #7D531B;
+            font-weight: 600;
+        }
+
+        /* 03 直播节奏与货盘咬合表 */
+        .rundown-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            background: #FFF;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.04);
+        }
+        .rundown-table th, .rundown-table td {
+            padding: 16px 18px;
+            text-align: left;
+            border-bottom: 1px solid #EBF0EA;
+            font-size: 0.92rem;
+            line-height: 1.6;
+            vertical-align: top;
+        }
+        .rundown-table th {
+            background: var(--forest-deep);
+            color: #FFF;
+            font-weight: 700;
+            font-size: 0.94rem;
+        }
+        .rundown-table tr:hover { background: #F7FAF6; }
+
+        /* 04 二传话题矩阵 */
+        .topic-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 10px;
+        }
+        .topic-col {
+            background: #F8FAF7;
+            border: 1px solid #E2ECE0;
+            border-radius: 16px;
+            padding: 20px;
+        }
+        .topic-col h4 {
+            font-size: 1.05rem;
+            color: var(--forest-deep);
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #DCE8DA;
+        }
+        .topic-item {
+            margin-bottom: 12px;
+            font-size: 0.88rem;
+            line-height: 1.55;
+            color: #425448;
+        }
+        .topic-tag {
+            display: inline-block;
+            background: #E8F2E8;
+            color: #1E3F2B;
+            font-weight: 800;
+            padding: 3px 9px;
+            border-radius: 6px;
+            margin-bottom: 4px;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 1080px) {
+            .kpi-row { grid-template-columns: repeat(2, 1fr); }
+            .ip-gallery, .tier-grid, .topic-grid, .scene-banner { grid-template-columns: 1fr; }
+            .col-5, .col-6, .col-7, .col-12 { grid-column: span 12; }
+            .header-banner { flex-direction: column; align-items: flex-start; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container-wrap">
+
+    <!-- 顶部高定雪山草地横幅 + 灵仔IP徽章 -->
+    <div class="header-banner">
+        <div class="header-left">
+            <h1>
+                🏔️ 999感冒灵 ×《后会友期》马天宇抖音专场直播企划
+            </h1>
+            <div class="theme-line">主标题：《你跟谁掰了？马天宇的“999号吃瓜观察室”》 —— 专治社交重感冒，裹紧成年人的安全感</div>
+            <p>基于 1,959 条抖音真实评论数据洞察 | 融合“999灵仔IP视觉、三阶周边货盘、四大综艺融梗点位、90分钟咬合表”</p>
+        </div>
+        <div class="header-ip-badge">
+            <img src="lingzai.png"alt="999灵仔IP">
+            <div class="header-ip-text">
+                <b>🌱 999核心IP：灵仔 & 绿白毯</b>
+                求购声量占比 <b>73.3%</b> (393次提及)<br>
+                直播间C位引流爆品 & 动画替身
+            </div>
+        </div>
+    </div>
+
+    <!-- 顶部导航栏：数据面板放第一个 -->
+    <div class="nav-tabs">
+        <div class="nav-tab active" onclick="switchTab('tab-dashboard', this)">📊 舆情数据交互看板</div>
+        <div class="nav-tab" onclick="switchTab('tab-strategy', this)">🚀 整合营销与直播主策划案</div>
+        <div class="nav-tab" onclick="switchTab('tab-rundown', this)">⏱️ 直播节奏与货盘咬合表 & 二传矩阵</div>
+    </div>
+
+    <!-- 核心统计指标行 -->
+    <div class="kpi-row">
+        <div class="kpi-card">
+            <div class="kpi-label">有效清洗评论总量 (Count)</div>
+            <div class="kpi-value">1,959 <span style="font-size:1rem;font-weight:500;">条</span></div>
+            <div class="kpi-desc">分类均值 391.8 条 | 覆盖求购、痛点、剧情、夸赞</div>
+        </div>
+        <div class="kpi-card grass">
+            <div class="kpi-label">C位爆品：节目同款绿白毛毯求购</div>
+            <div class="kpi-value">393 <span style="font-size:1rem;font-weight:500;">次 (占求购73.3%)</span></div>
+            <div class="kpi-desc">1万条现货秒发 + 15天限时预售双轨制 + 139元全家桶</div>
+        </div>
+        <div class="kpi-card gold">
+            <div class="kpi-label">核心痛点阻击：秒空 & 静电 & 定价</div>
+            <div class="kpi-value">258 <span style="font-size:1rem;font-weight:500;">条 (13.2%)</span></div>
+            <div class="kpi-desc">69元直降击碎黄牛 | 升级抗静电工艺贴脸回应</div>
+        </div>
+        <div class="kpi-card glacier">
+            <div class="kpi-label">高热融梗：画地为牢/裹毯哭泣/倾斜雨伞 & 灵仔周边</div>
+            <div class="kpi-value">286 <span style="font-size:1rem;font-weight:500;">条 (14.6%)</span></div>
+            <div class="kpi-desc">灵仔公仔(56次)/倾斜伞(37次)/向日葵小王子(41次)</div>
+        </div>
+    </div>
+
+    <!-- ==================== TAB 1 (默认): 舆情数据交互大屏 ==================== -->
+    <div id="tab-dashboard" class="section-container active">
+        <div class="grid-12">
+
+            <!-- 999 形状高频词云图腾 -->
+            <div class="card col-12">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">💚 999感冒灵 · 舆情高频词云图（TOP 50）</div>
+                        <div class="card-subtitle">鼠标悬停查看真实提及次数</div>
+                    </div>
+                </div>
+                <div id="chartWordCloud" class="chart-box-tall"></div>
+            </div>
+
+            <div class="card col-5">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">🌿 评论区五大情感与意图分布</div>
+                        <div class="card-subtitle">点击底部图例可自由筛选分类，悬停查看精准声量与占比</div>
+                    </div>
+                    <span class="card-pill">玫瑰环图</span>
+                </div>
+                <div id="chartCategory" class="chart-box"></div>
+            </div>
+
+            <div class="card col-7">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">🏔️ 舆情声量全景多维下钻结构 (分类 ➔ 核心高频词)</div>
+                        <div class="card-subtitle">支持点击任意扇区下钻放大</div>
+                    </div>
+                    <span class="card-pill">可交互旭日图</span>
+                </div>
+                <div id="chartSunburst" class="chart-box"></div>
+            </div>
+
+            <div class="card col-6">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">🧣 节目同款周边求购渴望度榜单</div>
+                        <div class="card-subtitle">999绿白毛毯393次提及断层领跑，灵仔玩偶与倾斜雨伞紧随其后</div>
+                    </div>
+                    <span class="card-pill">周边转化洞察</span>
+                </div>
+                <div id="chartMerch" class="chart-box"></div>
+            </div>
+
+            <div class="card col-6">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">⚡ 痛点吐槽五大维度柱线拆解</div>
+                        <div class="card-subtitle">直播间话术重点防御区：化解秒空、69/139定价、聚酯纤维静电与黄牛焦虑</div>
+                    </div>
+                    <span class="card-pill gold">重点舆情预警</span>
+                </div>
+                <div id="chartPain" class="chart-box"></div>
+            </div>
+
+            <div class="card col-12">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">☀️ 《后会友期》剧情名场面 × 999感冒灵品牌资产赋能图谱</div>
+                        <div class="card-subtitle">从《爸爸去哪儿》到《后会友期》，慢综疗愈调性如何转化为大众对“金主妈妈”的品牌偏爱</div>
+                    </div>
+                    <span class="card-pill">内容×品牌双赢</span>
+                </div>
+                <div id="chartShowBrand" class="chart-box"></div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ==================== TAB 2: 整合营销与直播主策划案 ==================== -->
+    <div id="tab-strategy" class="section-container">
+        <div class="grid-12">
+
+            <!-- 灵仔 IP 与核心周边视觉画廊 -->
+            <div class="card col-12">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">🧸 999感冒灵「灵仔IP × 999感冒灵核心周边」视觉与直播落地矩阵</div>
+                        <div class="card-subtitle">提取自《后会友期》官方高赞视觉资产：将网友刷屏求购的“绿白针织毯、灵仔公仔、雨伞抱枕”转化为直播间三大视觉锤</div>
+                    </div>
+                    <span class="card-pill">官方IP实景赋能</span>
+                </div>
+                <div class="ip-gallery">
+                    <div class="ip-visual-card">
+                        <div class="ip-visual-img-wrap">
+                            <span class="ip-floating-tag">🔥 提及 393 次 · 断层C位爆品</span>
+                            <img src="999pic1.png" alt="If you cry, cry in 999-绿白毛毯">
+                        </div>
+                        <div class="ip-visual-body">
+                            <div>
+                                <div class="ip-visual-title">① 节目同款「999绿白针织毯」</div>
+                                <div class="ip-visual-desc">If you cry, cry in 999.《后会友期》全员披挂出圈，针对前期“139元嫌贵、69元4000条秒空、怕聚酯纤维起静电”三大痛点，本场升级柔顺抗静电工艺，开辟独立产线管够。</div>
+                            </div>
+                            <div class="ip-mech-box">💡 直播机制：单买破冰价 69元（1万条现货+15天预售双轨制）；139元直接抱走【毛毯+灵仔+热饮】和解全家桶！</div>
+                        </div>
+                    </div>
+
+                    <div class="ip-visual-card">
+                        <div class="ip-visual-img-wrap">
+                            <span class="ip-floating-tag">🌱 提及 56 次 · 打版首发/满赠钩子</span>
+                            <img src="999pic2.png" alt="灵仔是一本摊开的书-雪山草地公仔">
+                        </div>
+                        <div class="ip-visual-body">
+                            <div>
+                                <div class="ip-visual-title">② 「灵仔大公仔 / 挂件」& 倾斜晴雨伞</div>
+                                <div class="ip-visual-desc">不仅在直播间大屏担任《画地为牢》名场面动画替身（规避艺人肖像权），更是拉高客单价的终极萌物钩子。可定制大公仔限定发售，小灵仔挂件作为满赠，。</div>
+                            </div>
+                            <div class="ip-mech-box">💡 直播机制：3,000只手工打版公仔限定首发（39元）；全店实付满99元随机赠灵仔毛绒挂件，整点抽送100把同款倾斜雨伞！</div>
+                        </div>
+                    </div>
+
+                    <div class="ip-visual-card">
+                        <div class="ip-visual-img-wrap">
+                            <span class="ip-floating-tag">☕ 高脚杯同款 · 情绪解压产品线</span>
+                            <img src="999pic6.webp" alt="999感冒灵暖心电台-草本热饮">
+                        </div>
+                        <div class="ip-visual-body">
+                            <div>
+                                <div class="ip-visual-title">③ 「我不感冒」独居底气箱 + 周边</div>
+                                <div class="ip-visual-desc">【底气箱配置】暖胃发汗内调：马天宇高脚杯特调同款草本饮（浓缩红糖姜茶+蜂蜜黄精茶/菊花晶代用茶）；物理降温急救：医用退热贴 + 便携液晶数显电子体温计；温热解压外敷：艾草暴汗足浴包 + 植萃蒸汽热敷眼罩；日常小伤自愈：医用透气防水创口贴+便携一次性折断式碘伏消毒棉棒。   </div>
+                            </div>
+                            <div class="ip-mech-box">💡 直播机制：买【社交清毒发汗包】加29.9元换购或满额直赠“我不感冒”抱枕；收尾福袋随箱附赠向日葵治愈种子卡。</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 00 核心爆品矩阵与供应链备货策略 -->
+            <div class="card col-12">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">00｜核心爆品矩阵与供应链备货策略（基于 1,959 条评论数据洞察）</div>
+                        <div class="card-subtitle">用“周边引流 + 本品锁客”组合拳，正面回应“4000条秒空(40.3%)”、“69/139元价格敏感(31.4%)”与“静电担忧(18.2%)”</div>
+                    </div>
+                    <span class="card-pill gold">供应链与售卖机制升级</span>
+                </div>
+                <div class="tier-grid">
+                    <div class="tier-card tier-1">
+                        <span class="tier-badge">C位引流王炸 · 占求购声量 73.3%</span>
+                        <h4>🧣 节目同款“999绿白针织毯”</h4>
+                        <ul>
+                            <li><b>数据支撑：</b>评论区提及高达 <b>393 次</b>，是决定整场直播留存率与舆论风向的绝对核心。</li>
+                            <li><b>供应链策略：</b>开辟独立生产线，告别“4000条秒没”；升级柔顺抗静电工艺，正面化解“聚酯纤维起静电”槽点。</li>
+                            <li><b>双轨售卖机制：</b>单买破冰价 <b>69元/条</b>（击穿闲鱼黄牛溢价）；首批备足 <b>10,000条现货</b>秒发，抢空后无缝切换<b>“限时预售（承诺15天内发货）”</b>。</li>
+                        </ul>
+                    </div>
+                    <div class="tier-card tier-2">
+                        <span class="tier-badge">利润拉升与满赠钩子 · 93次联合提及</span>
+                        <h4>🧸 灵仔公仔 / 毛绒挂件 / 倾斜雨伞</h4>
+                        <ul>
+                            <li><b>数据支撑：</b>灵仔玩偶及挂件提及 <b>56 次</b>，倾斜雨伞提及 <b>37 次</b>，向日葵/小王子提及 <b>41 次</b>。</li>
+                            <li><b>限定打版首发：</b>针对弹幕刷屏求购的“灵仔大公仔”，直播间放出 <b>3,000 只小批量手工打版现货</b>（定价39元，或与热饮组成99元CP礼盒）。</li>
+                            <li><b>139元真香反转机制：</b>实付满 99 元赠“灵仔挂件”；实付满 <b>139 元（原毛毯争议价）直接抱走【绿白毛毯+草本热饮+灵仔公仔】大满贯礼盒</b>，把价格刺客变成真香全家桶。</li>
+                        </ul>
+                    </div>
+                    <div class="tier-card tier-3">
+                        <span class="tier-badge">情绪价值与大健康本品锁客</span>
+                        <h4>🛋️ “我不感冒”抱枕 & 999独居底气箱</h4>
+                        <ul>
+                            <li><b>产品配置：</b>“我不感冒”定制抱枕（14次提及）+ 999独居底气箱。</li>
+                            <li><b>连带转化玩法：</b>作为中后场转化主力，以“专治嘴硬心冷热饮组”、“社交清毒发汗包”、“0密友独居底气箱”三大场景包售卖。</li>
+                            <li><b>长尾留存钩子：</b>整点福袋抽送 100 把节目同款<b>倾斜晴雨伞</b>，下单随箱附赠小王子向日葵种子卡。</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+         <!-- 01 直播整体主题与空间视觉设计 -->
+<div class="col-12">
+    <!-- 替换为 999 品牌深绿色背景 (#274730) 和 淡淡的浅绿边框 -->
+    <div class="scene-banner" style="display: grid; grid-template-columns: 1fr 360px; gap: 32px; align-items: stretch; background: #274730; border: 1px solid rgba(132, 195, 85, 0.3); border-radius: 22px; padding: 32px; box-shadow: 0 10px 30px rgba(0,0,0,0.15);">
+        
+        <!-- 左侧：文字内容区 -->
+        <div style="display: flex; flex-direction: column; justify-content: center;">
+            
+            <!-- 标签改为灵仔主题亮绿色 -->
+            <span class="badge-tag" style="margin-bottom:12px; display:inline-block; font-size: 0.8rem; background: rgba(132, 195, 85, 0.15); color: #A3E671; padding: 4px 12px; border-radius: 999px; border: 1px solid rgba(132, 195, 85, 0.3); width: fit-content;">
+                🌿 01｜直播整体主题与空间视觉设计
+            </span>
+            
+            <h3 style="font-size: 1.35rem; color: #FFFFFF; margin-bottom: 8px;">1:1 复刻《后会友期》第二现场观察室</h3>
+            
+            <!-- 左侧边框改为 999 品牌绿 -->
+            <div class="scene-sub" style="font-size: 0.9rem; color: #CFE0D3; margin-bottom: 20px; border-left: 3px solid #84C355; padding-left: 12px;">
+                主标题：《你跟谁掰了？马天宇的“999号吃瓜观察室”》<br>
+                副标题：专治社交重感冒，裹紧成年人的安全感
+            </div>
+            
+            <!-- 列表文字颜色调整为柔和的浅青灰/浅绿白，确保在深绿底色上清晰易读 -->
+            <ul class="scene-list" style="padding-left: 20px; font-size: 0.9rem; color: #CFE0D3; line-height: 1.7; margin-bottom: 24px;">
+                <li style="margin-bottom: 12px;"><b>前景环境与沙发C位：</b>暖光木质调观察室。右侧马天宇身穿浅色宽松针织衫松弛陷在复古皮沙发里，<b>腿上搭着“999绿白针织毯”，怀里揣着“灵仔公仔”和“我不感冒”抱枕</b>；旁立“999定制晴雨伞”与一束向日葵。</li>
+                <li style="margin-bottom: 12px;"><b>小圆桌五样符号单品：</b>拒绝杂乱货堆，只放一只<b>水晶高脚杯</b>（泡999草本热饮）、一盘瓜子鸭舌零食、一只高原便携氧气瓶、999家用医疗包、控制大屏的遥控器。</li>
+                <li><b>背景巨型分屏监视器：</b>轮播<b>“灵仔穿小王子斗篷复刻手绘动画”</b>（避险）、<b>关于“139元毛毯/4000条秒空”吐槽弹幕截图</b>、以及连麦网友投稿的匿名友情聊天记录。</li>
+            </ul>
+
+            <!-- Hook框改为微透的绿色背景 -->
+            <div class="hook-box" style="background: rgba(132, 195, 85, 0.08); border: 1px solid rgba(132, 195, 85, 0.25); border-radius: 12px; padding: 18px 20px;">
+                <h4 style="color: #e2e9de; font-size: 1rem; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">⚡ 黄金 3 秒进房 Hook</h4>
+                <p style="font-size: 0.88rem; color: #F7F5F0; margin: 0; line-height: 1.6;">
+                    用户划入直播间，没有刺耳的“321上链接”，而是看到马天宇裹着999绿白毛毯、捏着灵仔公仔、晃着高脚杯，按暂停身后满屏的“139元毛毯吐槽”，对着镜头露出<b>“看热闹不嫌事大”的吃瓜微笑</b>。
+                </p>
+            </div>
+        </div>
+
+        <!-- 右侧：竖版 9:16 AI 配图预留窗口 -->
+        <!-- 虚线边框和底色同样适配深绿主题 -->
+        <div class="ai-slot vertical-slot" style="position: relative; overflow: hidden; height: 100%; min-height: 560px; border-radius: 18px; border: 1.5px dashed rgba(132, 195, 85, 0.4); background: #1A3020; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; text-align: center;">
+            
+            <img src="999livestream.png" alt="马天宇999竖版直播间视觉" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 2;" onerror="this.style.display='none'">
+            
+            <div class="ai-placeholder-content" style="z-index: 1; max-width: 92%;">
+                <span class="ai-slot-badge" style="display: inline-block; background: rgba(132, 195, 85, 0.18); color: #A3E671; border: 1px solid rgba(132, 195, 85, 0.4); font-size: 0.75rem; font-weight: 700; padding: 3px 11px; border-radius: 999px; margin-bottom: 8px;">📱 AI 配图位 · 竖版直播间</span>
+                <div class="ai-slot-title" style="font-size: 0.98rem; font-weight: 700; color: #FFFFFF; margin-bottom: 6px;">“999号吃瓜观察室”手机屏视角</div>
+                <div class="ai-prompt-text" style="font-size: 0.72rem; color: #CFE0D3; background: rgba(0, 0, 0, 0.35); padding: 8px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.07); line-height: 1.45;">
+                    Prompt: Vertical TikTok livestream screen layout, handsome Asian male celebrity relaxing on a vintage leather sofa... 8k --ar 9:16
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+            <!-- 02 四大核心互动点位设计 -->
+            <div class="point-card col-6">
+                <div class="point-top">
+                    <span class="point-num">📍 点位 1（0-20min）</span>
+                    <div class="point-title">【审判金主妈妈】139到69元的体面破冰 & 痛击黄牛</div>
+                </div>
+                <div class="point-data-bar">📊 数据切入：毛毯求购 393 次（占73.3%），库存少/秒空痛点 104 次（占40.3%），价格争议 81 次，静电担忧 47 次。</div>
+                <ol class="point-steps">
+                    <li><b>贴脸开大：</b>开场前15分钟不急着卖货。马天宇拿起遥控器，大屏切出抖音真实高赞吐槽截图——<i>“999毛毯卖139元心都凉了”、“才4000条秒没，缝纫机踩冒烟了吗？”、“聚酯纤维会不会电死我？”</i></li>
+                    <li><b>直球三连问：</b>马天宇把999品牌总监叫到沙发旁，复刻节目里对厉娜的平静直球三连问：“来，聊聊吧，你们跟消费者是怎么掰的？一条毯子标139才备货四千条，闲鱼黄牛都炒疯了，你们是织毛毯把脑子织坏了吗？”</li>
+                    <li><b>青稚式蒙头哭还原：</b>品牌总监面对质问“无言以对”，顺势拉起沙发上的999绿白毛毯一把蒙住头、肩膀微颤，<b>1:1模仿节目里“青稚式隐忍落泪”</b>。</li>
+                    <li><b>抗静电实测与机制反转：</b>马天宇笑着扯下总监毯子：“行了别演了，网友还怕聚酯纤维起静电？我替大家摸过了，加厚针织做了抗静电处理，高原风吹日晒都不扎人。” (也可回扣999毛毯的专属slogan if you cry, cry in 999) </li>
+                </ol>
+                <div class="point-mech-footer">🛒 落地机制：单买毯子 <b>69元破冰价</b>（1万条现货秒发 + 15天限时预售双轨制，彻底击穿黄牛）；对139有执念的观众，<b>139元直接给【绿白毛毯+灵仔公仔+暖胃热饮】三件套全家桶</b></div>
+            </div>
+
+            <div class="point-card col-6">
+                <div class="point-top">
+                    <span class="point-num gold">📍 点位 2（20-45min）</span>
+                    <div class="point-title">【画地为牢·买定离手】绿白毯防尴尬与灵仔打版首发</div>
+                </div>
+                <div class="point-data-bar">📊 数据切入：《画地为牢》提及 36 次，青稚白小纯 34 次，许飞厉娜 142 次；灵仔玩偶求购 56 次，倾斜雨伞 37 次。</div>
+                <ol class="point-steps">
+                    <li><b>高脚杯喝999防尴尬哲学：</b>大屏播放“灵仔版”高原冷风对峙名场面。主播问如何忍住不替他们尴尬，马天宇端起水晶高脚杯抿了一口<b>999红糖姜茶饮</b>：“在高原录节目我就发现，遇到冷场或者听别人翻旧账，先喝口热乎的暖胃，再拿毯子把头一蒙——只要我看不见，尴尬的就是别人。”</li>
+                    <li><b>“画地为牢”现场融梗：</b>弹幕疯狂刷屏求购沙发上的“灵仔玩偶”和“雨伞”。马天宇直接拿出一支粉笔，在品牌总监脚下画一个圆圈。</li>
+                    <li><b>逼出打版库存：</b>马天宇调侃：“今天我们也玩一把<b>《画地为牢》</b>你就站这个圈里，什么时候把网友要的灵仔公仔打版链接交出来、把库存加够，什么时候才准出圈.”总监在圈内妥协放货。</li>
+                </ol>
+                <div class="point-mech-footer">🛒 落地机制：开启<b>“灵仔大公仔3,000只限定打版首发通道”</b>；购买草本热饮组<b>满99元随机白送灵仔毛绒挂件</b>；整点下单抽送100把节目同款<b>倾斜晴雨伞</b></div>
+            </div>
+
+            <div class="point-card col-6">
+                <div class="point-top">
+                    <span class="point-num meadow">📍 点位 3（45-70min）</span>
+                    <div class="point-title">【人间拧巴关系大赏】“我不感冒”抱枕与左滑断舍离</div>
+                </div>
+                <div class="point-data-bar">📊 数据切入：呼应场外“杨幂孙怡排队求马天宇删好友”热梗，以及评论区“向日葵被烟熏”、“我不感冒抱枕(14次)”讨论。</div>
+                <ol class="point-steps">
+                    <li><b>高反劝退师上线：</b>大屏切入直播间网友实时投稿的“窒息友情账单/聊天记录”（如单方面冷暴力, 塑料朋友背刺）。马天宇拿平板随手翻看在线 Reaction。</li>
+                    <li><b>“我不感冒”抱枕态度融梗：</b>马天宇抱起沙发上印着大字的<b>“我不感冒”定制抱枕</b>挡在胸前开启清醒点评：“像这种消耗你的朋友，不删留着过年吗？我的态度就印在这个抱枕上——<b>对烂人烂事，我真的‘不感冒’</b>。”</li>
+                    <li><b>向日葵烤串梗与泡脚发汗：</b>“强行维系的关系太累，烤串烟乎到向日葵都会焉，晚上睡不着的也是你。微信左滑删除，然后拆一袋<b>999艾草足浴包</b>泡个脚，贴上蒸汽眼罩发身汗睡一觉，明天什么事都没有。”</li>
+                </ol>
+                <div class="point-mech-footer">🛒 落地机制：推出<b>【社交清毒】发汗包</b>，下单<b>加29.9元换购或满额直赠马天宇怀里同款【“我不感冒”抱枕】</b></div>
+            </div>
+
+            <div class="point-card col-6">
+                <div class="point-top">
+                    <span class="point-num glacier">📍 点位 4（70-90min）</span>
+                    <div class="point-title">【观察室熄灯后的真心话】“密友为0”的小王子独处底气</div>
+                </div>
+                <div class="point-data-bar">📊 数据切入：向日葵与小王子治愈细节提及 41 次，夸赞“999金主妈妈从爸爸去哪儿到慢综神仙审美”高达 79 次。</div>
+                <ol class="point-steps">
+                    <li><b>熄灯慢直播氛围：</b>最后20分钟导播关掉顶灯与八卦弹幕，大屏切换为雪山星空下安静燃烧的篝火壁炉与一朵向日葵画面，BGM调至极低。</li>
+                    <li><b>AI灵仔暖心彩蛋：</b>呼应节目中“密友为0，难过时只能跟AI聊天”的扎心剖白。马天宇坐在暖光里打开平板语音AI闲聊：“今天说了快两小时的话，其实有点累了。” AI用温和灵仔音色回应：“累了就闭麦休息吧，小王子在自己的星球上也不需要讨好所有人。不合群不丢人，记得含颗999润喉糖，别着凉。”</li>
+                    <li><b>金主审美与独处底气升华：</b>马天宇含着润喉糖坦诚收尾：“很多人觉得密友为0很惨，但成年人最好的状态，就是有个不用讨好任何人的空间。家里备个医药健康箱，嗓子干了吃颗润喉糖，冷了盖毯子。把自己照顾好，比认识一百个假朋友都有底气。”</li>
+                </ol>
+                <div class="point-mech-footer">🛒 落地机制：收尾主推<b>【“0密友也不怕”独居底气医药箱】</b>下单<b>随箱附赠“小王子向日葵种子卡”与定制明信片</b>，给i人一站式温暖兜底</div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ==================== TAB 3: 直播节奏与货盘咬合表 & 二传矩阵 ==================== -->
+    <div id="tab-rundown" class="section-container">
+        <div class="grid-12">
+
+            <div class="card col-12">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">03｜90分钟直播节奏与货盘精准咬合表（微调升级版）</div>
+                        <div class="card-subtitle">将“周边引流爆品”与“999大健康常备本品”严密咬合在四个情绪脉冲节点，兼顾版权避险与GMV转化</div>
+                    </div>
+                    <span class="card-pill">全流程执行Run-down</span>
+                </div>
+                <table class="rundown-table">
+                    <thead>
+                        <tr>
+                            <th style="width:13%;">直播阶段</th>
+                            <th style="width:25%;">互动核心点位与融梗设计</th>
+                            <th style="width:18%;">版权避险与视觉调度</th>
+                            <th style="width:20%;">999直播产品矩阵（周边+本品）</th>
+                            <th style="width:24%;">直播間定制货盘名称 & 售卖机制</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><b>开场引爆</b><br>（0-20分钟）</td>
+                            <td><b>点位1【审判金主妈妈】</b><br>贴脸审问139元定价与4000条秒空，总监裹毯模仿“青稚蒙头哭”，实测抗静电手感，当场砍到69元</td>
+                            <td>品牌总监真人Cos蒙头哭 + 网友真实吐槽弹幕投屏，不放原片艺人肖像</td>
+                            <td><b>【C位爆品引流线】</b><br>• 999绿白针织毯<br>• 139元和解全家桶</td>
+                            <td>📦 <b>69元“体面和解”同款防寒毯</b><br><i>机制：1万条现货秒发 + 15天限时预售双轨制；139元直接拿走【毛毯+灵仔+热饮】大满贯礼盒</i></td>
+                        </tr>
+                        <tr>
+                            <td><b>高频互动</b><br>（20-45分钟）</td>
+                            <td><b>点位2【画地为牢·买定离手】</b><br>高脚杯喝999传授防尴尬指南；马天宇复刻“画地为牢”官方玩梗，逼出灵仔打版首发与雨伞福利</td>
+                            <td>观察室画中画 + 灵仔手绘动画还原《画地为牢》名场面</td>
+                            <td><b>【草本热饮+萌物周边线】</b><br>• 999红糖姜茶/菊花晶/黄精饮<br>• 灵仔限定打版公仔/挂件<br>• 节目同款倾斜晴雨伞</td>
+                            <td>📦 <b>“专治嘴硬心冷”暖胃热饮组</b><br><i>机制：热饮组合高性价比走量；满99元赠灵仔挂件；灵仔大公仔3000只限量打版首发；整点抽送100把同款倾斜雨伞</i></td>
+                        </tr>
+                        <tr>
+                            <td><b>情绪高潮</b><br>（45-70分钟）</td>
+                            <td><b>点位3【人间拧巴关系大赏】</b><br>手抱“我不感冒”抱枕在线审判网友窒息友情投稿，现场教学“微信左滑删除+泡脚发汗”</td>
+                            <td>征集直播间网友匿名聊天记录投屏，无任何艺人版权风险</td>
+                            <td><b>【外用防寒解压+态度周边线】</b><br>• 999艾草足浴包+暖贴+蒸汽眼罩<br>• “我不感冒”定制抱枕</td>
+                            <td>📦 <b>“社交清毒·闭眼不看”发汗包</b><br><i>机制：买足浴包+眼罩解压组合，加29.9元换购或满额直赠【“我不感冒”态度抱枕】</i></td>
+                        </tr>
+                        <tr>
+                            <td><b>走心收尾</b><br>（70-90分钟）</td>
+                            <td><b>点位4【熄灯后的真心话】</b><br>篝火向日葵背景，重现“密友为0”与AI灵仔连线彩蛋，致敬小王子式的独处成年人</td>
+                            <td>暖光壁炉 + 马天宇个人松弛夜话，拉满品牌长期主义高度</td>
+                            <td><b>【护嗓&常备家庭健康箱】</b><br>• 999润喉糖/秋梨膏+退热贴<br>• 999家庭常备暖心医疗包（独处底气箱）<br>• 向日葵治愈种子卡</td>
+                            <td>📦 <b>“0密友也不怕”独居底气箱</b><br><i>机制：一站式家庭常备健康礼盒，下单随箱附赠“小王子向日葵种子卡”与定制明信片，给i人稳稳的温暖兜底</i></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="card col-12">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">04｜全网二次传播话题矩阵（融入新梗与周边晒单闭环）</div>
+                        <div class="card-subtitle">将 90 分钟直播拆解为适应抖音、微博、小红书不同算法逻辑的切片资产，实现跨平台长尾引爆</div>
+                    </div>
+                    <span class="card-pill gold">跨平台热搜裂变</span>
+                </div>
+                <div class="topic-grid">
+                    <div class="topic-col">
+                        <h4>📱 抖音 / 快手（玩梗切片 & 抢购潮）</h4>
+                        <div class="topic-item">
+                            <span class="topic-tag">🔥 #马天宇直播给999画地为牢#</span><br>
+                            <b>核心切片：</b>马天宇拿粉笔在地上画圈逼总监交出灵仔公仔首发，联动节目《画地为牢》名场面。
+                        </div>
+                        <div class="topic-item">
+                            <span class="topic-tag">🔥 #马天宇把999总监问哭了#</span><br>
+                            <b>破冰切片：</b>直球追问139元定价和4000条秒空“是不是脑子坏了”，总监裹绿白毯模仿青稚痛哭。
+                        </div>
+                        <div class="topic-item">
+                            <span class="topic-tag">🔥 #马天宇 精神状态#</span><br>
+                            <b>Meme切片：</b>裹着绿白毛毯、抱着“我不感冒”抱枕、晃着红酒杯喝中药冲剂吃瓜，打造打工人最新精神状态meme。
+                        </div>
+                    </div>
+
+                    <div class="topic-col">
+                        <h4>💬 微博（社会情绪共鸣 & 慢综最强售后）</h4>
+                        <div class="topic-item">
+                            <span class="topic-tag">🔥 #马天宇后会友期最强售后#</span><br>
+                            <b>主榜冲刺：</b>从节目里吃瓜吃到999直播间，内娱活人整顿带货圈，把带货播成慢综番外篇。
+                        </div>
+                        <div class="topic-item">
+                            <span class="topic-tag">🔥 #对消耗型友情我真的不感冒#</span><br>
+                            <b>金句发酵：</b>结合马天宇抱着“我不感冒”抱枕劝网友左滑删好友切片，引发网友对“断舍离塑料友情”的讨论。
+                        </div>
+                        <div class="topic-item">
+                            <span class="topic-tag">🔥 #999感冒灵留足了成年人的体面#</span><br>
+                            <b>口碑反转：</b>从《爸爸去哪儿》到《后会友期》，从139元争议到69元现货管够+139元全家桶自嘲和解，拉满路人好感。
+                        </div>
+                    </div>
+
+                    <div class="topic-col">
+                        <h4>📕 小红书（独居松弛美学 & 周边晒单种草）</h4>
+                        <div class="topic-item">
+                            <span class="topic-tag">🔥 #密友为0的人今晚被马天宇暖到了#</span><br>
+                            <b>走心图文：</b>截取最后20分钟熄灯夜话与AI灵仔彩蛋，精准击中独居青年与i人软肋。
+                        </div>
+                        <div class="topic-item">
+                            <span class="topic-tag">🔥 #马天宇同款999绿白毯松弛感穿搭#</span><br>
+                            <b>审美种草：</b>把药企周边拍出雪山草地居家复古电影感，打造高颜值晒单返图主阵地。
+                        </div>
+                        <div class="topic-item">
+                            <span class="topic-tag">🔥 #终于抢到了999灵仔和绿白毯#</span><br>
+                            <b>晒单闭环：</b>激发抢到预售毛毯、灵仔公仔和向日葵种子卡的网友自发晒单“终于拿到999大芒果”，形成二次长尾种草。
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+<!-- 脚本逻辑：数据面板放第一个时默认激活 -->
+<script>
+    let chartsInitialized = true;
+    let chartCategory, chartSunburst, chartMerch, chartPain, chartShowBrand, chartWordCloud;
+
+    window.addEventListener('DOMContentLoaded', () => {
+        initAllDashboardCharts();
+    });
+
+    function switchTab(tabId, el) {
+        document.querySelectorAll('.section-container').forEach(sec => sec.classList.remove('active'));
+        document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
+        el.classList.add('active');
+
+        setTimeout(() => {
+            window.dispatchEvent(new Event('resize'));
+        }, 60);
+    }
+
+    function resizeAllCharts() {
+        if (chartCategory) chartCategory.resize();
+        if (chartSunburst) chartSunburst.resize();
+        if (chartMerch) chartMerch.resize();
+        if (chartPain) chartPain.resize();
+        if (chartShowBrand) chartShowBrand.resize();
+        if (chartWordCloud) chartWordCloud.resize();
+    }
+
+    const tooltipStyle = {
+        backgroundColor: 'rgba(30, 63, 43, 0.95)',
+        borderColor: '#8FB973',
+        borderWidth: 1,
+        padding: [12, 16],
+        textStyle: { color: '#FAF9F5', fontSize: 13 }
+    };
+
+    const palette = ['#6A92A4', '#1E3F2B', '#D49B54', '#7FA96B', '#3A6B4C'];
+
+    function initAllDashboardCharts() {
+        // 0. 999 形状词云图
+        var canvas = document.createElement('canvas');
+        canvas.width = 960; canvas.height = 460;
+        var ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(0, 0, 960, 460);
+        ctx.fillStyle = '#000';
+        ctx.font = '900 350px "Arial Black", "Impact", sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('999', 480, 235);
+
+        var maskImage = new Image();
+        maskImage.src = canvas.toDataURL();
+
+        var wcData = [
+            {"name": "毯子", "value": 604, "realValue": 302}, {"name": "许飞", "value": 180, "realValue": 90},
+            {"name": "毛毯", "value": 168, "realValue": 84}, {"name": "感冒灵", "value": 162, "realValue": 81},
+            {"name": "想要", "value": 112, "realValue": 56}, {"name": "厉娜", "value": 104, "realValue": 52},
+            {"name": "预售", "value": 48, "realValue": 48}, {"name": "节目", "value": 38, "realValue": 38},
+            {"name": "伞", "value": 37, "realValue": 37}, {"name": "画地为牢", "value": 36, "realValue": 36},
+            {"name": "链接", "value": 35, "realValue": 35}, {"name": "质量", "value": 34, "realValue": 34},
+            {"name": "抢不到", "value": 32, "realValue": 32}, {"name": "贵", "value": 30, "realValue": 30},
+            {"name": "999感冒灵", "value": 29, "realValue": 29}, {"name": "向日葵", "value": 28, "realValue": 28},
+            {"name": "价格", "value": 26, "realValue": 26}, {"name": "灵仔", "value": 25, "realValue": 25},
+            {"name": "金主", "value": 24, "realValue": 24}, {"name": "69", "value": 24, "realValue": 24},
+            {"name": "大芒果", "value": 23, "realValue": 23}, {"name": "青稚", "value": 23, "realValue": 23},
+            {"name": "综艺", "value": 22, "realValue": 22}, {"name": "周边", "value": 21, "realValue": 21},
+            {"name": "小王子", "value": 21, "realValue": 21}, {"name": "赞助", "value": 19, "realValue": 19},
+            {"name": "上链接", "value": 16, "realValue": 16}, {"name": "玩偶", "value": 16, "realValue": 16},
+            {"name": "限量", "value": 14, "realValue": 14}, {"name": "没抢到", "value": 14, "realValue": 14},
+            {"name": "眼光", "value": 13, "realValue": 13}, {"name": "开预售", "value": 13, "realValue": 13},
+            {"name": "抱枕", "value": 12, "realValue": 12}, {"name": "聚酯纤维", "value": 12, "realValue": 12},
+            {"name": "不够", "value": 12, "realValue": 12}, {"name": "爸爸去哪儿", "value": 12, "realValue": 12},
+            {"name": "挂件", "value": 11, "realValue": 11}, {"name": "和好", "value": 11, "realValue": 11},
+            {"name": "后会友期", "value": 11, "realValue": 11}, {"name": "秒没", "value": 11, "realValue": 11},
+            {"name": "白小纯", "value": 11, "realValue": 11}, {"name": "雨伞", "value": 11, "realValue": 11},
+            {"name": "便宜", "value": 10, "realValue": 10}, {"name": "多做", "value": 10, "realValue": 10},
+            {"name": "黄牛", "value": 10, "realValue": 10}, {"name": "太少", "value": 10, "realValue": 10},
+            {"name": "四千条", "value": 9, "realValue": 9}, {"name": "我不感冒", "value": 9, "realValue": 9},
+            {"name": "金主爸爸", "value": 8, "realValue": 8}, {"name": "朋友", "value": 8, "realValue": 8},
+            {"name": "贵 ", "value": 30, "realValue": 30}, {"name": "贵  ", "value": 24, "realValue": 30}, {"name": "贵   ", "value": 10, "realValue": 30},
+            {"name": "999感冒灵 ", "value": 29, "realValue": 29}, {"name": "999感冒灵  ", "value": 23, "realValue": 29}, {"name": "999感冒灵   ", "value": 10, "realValue": 29},
+            {"name": "向日葵 ", "value": 28, "realValue": 28}, {"name": "向日葵  ", "value": 22, "realValue": 28}, {"name": "向日葵   ", "value": 10, "realValue": 28},
+            {"name": "价格 ", "value": 26, "realValue": 26}, {"name": "价格  ", "value": 20, "realValue": 26}, {"name": "价格   ", "value": 10, "realValue": 26},
+            {"name": "灵仔 ", "value": 25, "realValue": 25}, {"name": "灵仔  ", "value": 20, "realValue": 25}, {"name": "灵仔   ", "value": 10, "realValue": 25},
+            {"name": "金主 ", "value": 24, "realValue": 24}, {"name": "金主  ", "value": 19, "realValue": 24}, {"name": "金主   ", "value": 10, "realValue": 24},
+            {"name": "69 ", "value": 24, "realValue": 24}, {"name": "69  ", "value": 19, "realValue": 24}, {"name": "69   ", "value": 10, "realValue": 24},
+            {"name": "大芒果 ", "value": 23, "realValue": 23}, {"name": "大芒果  ", "value": 18, "realValue": 23}, {"name": "大芒果   ", "value": 10, "realValue": 23},
+            {"name": "青稚 ", "value": 23, "realValue": 23}, {"name": "青稚  ", "value": 18, "realValue": 23}, {"name": "青稚   ", "value": 10, "realValue": 23},
+            {"name": "综艺 ", "value": 22, "realValue": 22}, {"name": "综艺  ", "value": 17, "realValue": 22}, {"name": "综艺   ", "value": 10, "realValue": 22},
+            {"name": "周边 ", "value": 21, "realValue": 21}, {"name": "周边  ", "value": 16, "realValue": 21}, {"name": "周边   ", "value": 10, "realValue": 21},
+            {"name": "小王子 ", "value": 21, "realValue": 21}, {"name": "小王子  ", "value": 16, "realValue": 21}, {"name": "小王子   ", "value": 10, "realValue": 21},
+            {"name": "赞助 ", "value": 19, "realValue": 19}, {"name": "赞助  ", "value": 15, "realValue": 19}, {"name": "赞助   ", "value": 10, "realValue": 19},
+            {"name": "上链接 ", "value": 16, "realValue": 16}, {"name": "上链接  ", "value": 12, "realValue": 16}, {"name": "上链接   ", "value": 10, "realValue": 16},
+            {"name": "玩偶 ", "value": 16, "realValue": 16}, {"name": "玩偶  ", "value": 12, "realValue": 16}, {"name": "玩偶   ", "value": 10, "realValue": 16},
+            {"name": "限量 ", "value": 14, "realValue": 14}, {"name": "限量  ", "value": 11, "realValue": 14}, {"name": "限量   ", "value": 10, "realValue": 14},
+            {"name": "没抢到 ", "value": 14, "realValue": 14}, {"name": "没抢到  ", "value": 11, "realValue": 14}, {"name": "没抢到   ", "value": 10, "realValue": 14},
+            {"name": "眼光 ", "value": 13, "realValue": 13}, {"name": "眼光  ", "value": 10, "realValue": 13}, {"name": "眼光   ", "value": 10, "realValue": 13},
+            {"name": "开预售 ", "value": 13, "realValue": 13}, {"name": "开预售  ", "value": 10, "realValue": 13}, {"name": "开预售   ", "value": 10, "realValue": 13},
+            {"name": "抱枕 ", "value": 12, "realValue": 12}, {"name": "抱枕  ", "value": 9, "realValue": 12}, {"name": "抱枕   ", "value": 10, "realValue": 12},
+            {"name": "聚酯纤维 ", "value": 12, "realValue": 12}, {"name": "聚酯纤维  ", "value": 9, "realValue": 12}, {"name": "聚酯纤维   ", "value": 10, "realValue": 12},
+            {"name": "不够 ", "value": 12, "realValue": 12}, {"name": "不够  ", "value": 9, "realValue": 12}, {"name": "不够   ", "value": 10, "realValue": 12},
+            {"name": "爸爸去哪儿 ", "value": 12, "realValue": 12}, {"name": "爸爸去哪儿  ", "value": 9, "realValue": 12}, {"name": "爸爸去哪儿   ", "value": 10, "realValue": 12},
+            {"name": "挂件 ", "value": 11, "realValue": 11}, {"name": "挂件  ", "value": 8, "realValue": 11}, {"name": "挂件   ", "value": 10, "realValue": 11},
+            {"name": "和好 ", "value": 11, "realValue": 11}, {"name": "和好  ", "value": 8, "realValue": 11}, {"name": "和好   ", "value": 10, "realValue": 11},
+            {"name": "后会友期 ", "value": 11, "realValue": 11}, {"name": "后会友期  ", "value": 8, "realValue": 11}, {"name": "后会友期   ", "value": 10, "realValue": 11},
+            {"name": "秒没 ", "value": 11, "realValue": 11}, {"name": "秒没  ", "value": 8, "realValue": 11}, {"name": "秒没   ", "value": 10, "realValue": 11},
+            {"name": "白小纯 ", "value": 11, "realValue": 11}, {"name": "白小纯  ", "value": 8, "realValue": 11}, {"name": "白小纯   ", "value": 10, "realValue": 11},
+            {"name": "雨伞 ", "value": 11, "realValue": 11}, {"name": "雨伞  ", "value": 8, "realValue": 11}, {"name": "雨伞   ", "value": 10, "realValue": 11},
+            {"name": "便宜 ", "value": 10, "realValue": 10}, {"name": "便宜  ", "value": 8, "realValue": 10}, {"name": "便宜   ", "value": 10, "realValue": 10},
+            {"name": "多做 ", "value": 10, "realValue": 10}, {"name": "多做  ", "value": 8, "realValue": 10}, {"name": "多做   ", "value": 10, "realValue": 10},
+            {"name": "黄牛 ", "value": 10, "realValue": 10}, {"name": "黄牛  ", "value": 8, "realValue": 10}, {"name": "黄牛   ", "value": 10, "realValue": 10},
+            {"name": "太少 ", "value": 10, "realValue": 10}, {"name": "太少  ", "value": 8, "realValue": 10}, {"name": "太少   ", "value": 10, "realValue": 10},
+            {"name": "四千条 ", "value": 9, "realValue": 9}, {"name": "四千条  ", "value": 7, "realValue": 9}, {"name": "四千条   ", "value": 10, "realValue": 9},
+            {"name": "我不感冒 ", "value": 9, "realValue": 9}, {"name": "我不感冒  ", "value": 7, "realValue": 9}, {"name": "我不感冒   ", "value": 10, "realValue": 9},
+            {"name": "金主爸爸 ", "value": 8, "realValue": 8}, {"name": "金主爸爸  ", "value": 6, "realValue": 8}, {"name": "金主爸爸   ", "value": 10, "realValue": 8},
+            {"name": "朋友 ", "value": 8, "realValue": 8}, {"name": "朋友  ", "value": 6, "realValue": 8}, {"name": "朋友   ", "value": 10, "realValue": 8}
+        ];
+
+        maskImage.onload = function() {
+            chartWordCloud = echarts.init(document.getElementById('chartWordCloud'));
+            chartWordCloud.setOption({
+                tooltip: {
+                    ...tooltipStyle,
+                    formatter: function(params) {
+                        var realName = params.name.trim();
+                        return '<span style="font-weight:bold;font-size:15px;color:#FFF;">' + realName + '</span><br/>真实提及声量：' + params.data.realValue + ' 次';
+                    }
+                },
+                series: [{
+                    type: 'wordCloud',
+                    maskImage: maskImage,
+                    sizeRange: [12, 86],
+                    rotationRange: [-45, 0, 45, 90],
+                    rotationStep: 45,
+                    gridSize: 3,
+                    drawOutOfBound: false,
+                    layoutAnimation: true,
+                    textStyle: {
+                        fontFamily: 'PingFang SC, Microsoft YaHei, sans-serif',
+                        fontWeight: 'bold',
+                        color: function () {
+                            var colors = ['#1B4332', '#2D6A4F', '#3A6B4C', '#52B788', '#D49B54'];
+                            return colors[Math.floor(Math.random() * colors.length)];
+                        }
+                    },
+                    emphasis: {
+                        focus: 'self',
+                        textStyle: { textShadowBlur: 10, textShadowColor: '#1B4332' }
+                    },
+                    data: wcData
+                }]
+            });
+        };
+
+        // 1. Category Chart
+        chartCategory = echarts.init(document.getElementById('chartCategory'));
+        chartCategory.setOption({
+            tooltip: { ...tooltipStyle, trigger: 'item', formatter: '<b>{b}</b><br/>评论数量：{c} 条<br/>声量占比：{d}%' },
+            legend: { bottom: '0%', left: 'center', icon: 'circle', textStyle: { color: '#4A5D50', fontSize: 12 } },
+            series: [{
+                name: '评论分类',
+                type: 'pie',
+                radius: ['38%', '72%'],
+                center: ['50%', '45%'],
+                roseType: 'radius',
+                itemStyle: { borderRadius: 8, borderColor: '#FFFFFF', borderWidth: 3 },
+                label: { show: true, formatter: '{b}\n{d}%', color: '#233529', fontWeight: 'bold' },
+                color: palette,
+                data: [
+                    { value: 879, name: '泛泛娱乐评论' },
+                    { value: 536, name: '周边求购' },
+                    { value: 258, name: '痛点吐槽' },
+                    { value: 206, name: '综艺剧情' },
+                    { value: 80,  name: '夸赞品牌' }
+                ]
+            }]
+        });
+
+        // 2. Sunburst Chart
+        chartSunburst = echarts.init(document.getElementById('chartSunburst'));
+        chartSunburst.setOption({
+            tooltip: { ...tooltipStyle, formatter: function(params) {
+                return '<b>' + params.name.replace('\n', ' ') + '</b><br/>频次：' + params.value + ' 次';
+            }},
+            series: {
+                type: 'sunburst',
+                data: [
+                    {
+                        name: '周边求购\n(536条)', itemStyle: { color: '#2D5A3C' },
+                        children: [
+                            { name: '毯子', value: 302, itemStyle: { color: '#3B704C' } },
+                            { name: '毛毯', value: 84, itemStyle: { color: '#49845B' } },
+                            { name: '想要', value: 56, itemStyle: { color: '#5B966D' } },
+                            { name: '雨伞/伞', value: 48, itemStyle: { color: '#6FA880' } },
+                            { name: '灵仔/玩偶', value: 41, itemStyle: { color: '#84B893' } },
+                            { name: '抱枕/挂件', value: 32, itemStyle: { color: '#99C7A6' } }
+                        ]
+                    },
+                    {
+                        name: '痛点吐槽\n(258条)', itemStyle: { color: '#D49B54' },
+                        children: [
+                            { name: '呼吁预售', value: 61, itemStyle: { color: '#DCAA6B' } },
+                            { name: '上链接', value: 51, itemStyle: { color: '#E2B67E' } },
+                            { name: '抢不到/秒没', value: 57, itemStyle: { color: '#E7C292' } },
+                            { name: '贵/价格/69', value: 80, itemStyle: { color: '#CA8B3E' } },
+                            { name: '质量/聚酯纤维', value: 46, itemStyle: { color: '#B87B31' } },
+                            { name: '黄牛', value: 45, itemStyle: { color: '#A36B26' } }
+                        ]
+                    },
+                    {
+                        name: '综艺剧情\n(206条)', itemStyle: { color: '#6A92A4' },
+                        children: [
+                            { name: '许飞', value: 90, itemStyle: { color: '#79A0B2' } },
+                            { name: '厉娜', value: 52, itemStyle: { color: '#89AFC0' } },
+                            { name: '画地为牢', value: 36, itemStyle: { color: '#99BECD' } },
+                            { name: '青稚', value: 34, itemStyle: { color: '#A9CDDA' } },
+                            { name: '向日葵', value: 49, itemStyle: { color: '#5B8294' } }
+                        ]
+                    },
+                    {
+                        name: '夸赞品牌\n(80条)', itemStyle: { color: '#7FA96B' },
+                        children: [
+                            { name: '999感冒灵', value: 110, itemStyle: { color: '#8EB67B' } },
+                            { name: '金主爸爸', value: 32, itemStyle: { color: '#9DC38B' } },
+                            { name: '大芒果', value: 42, itemStyle: { color: '#ACD09B' } },
+                            { name: '眼光', value: 25, itemStyle: { color: '#6E985A' } }
+                        ]
+                    }
+                ],
+                radius: ['18%', '90%'],
+                center: ['50%', '50%'],
+                itemStyle: { borderRadius: 6, borderWidth: 2, borderColor: '#FFFFFF' },
+                label: { rotate: 'radial', color: '#FFFFFF', fontSize: 11, fontWeight: 'bold' }
+            }
+        });
+
+        // 3. Merch Bar Chart
+        chartMerch = echarts.init(document.getElementById('chartMerch'));
+        chartMerch.setOption({
+            tooltip: { ...tooltipStyle, trigger: 'axis', axisPointer: { type: 'shadow' } },
+            grid: { left: '3%', right: '10%', top: '8%', bottom: '6%', containLabel: true },
+            xAxis: { type: 'value', splitLine: { lineStyle: { type: 'dashed', color: '#E6ECE4' } }, axisLabel: { color: '#687A6E' } },
+            yAxis: { type: 'category', data: ['“我不感冒”抱枕', '节目同款倾斜雨伞', '灵仔玩偶/挂件', '直接喊话求链接', '同款绿白毛毯'], axisLine: { show: false }, axisTick: { show: false }, axisLabel: { color: '#233529', fontWeight: 'bold', fontSize: 13 } },
+            series: [{
+                type: 'bar', barWidth: '52%',
+                data: [
+                    { value: 14, itemStyle: { color: '#A3C193' } },
+                    { value: 37, itemStyle: { color: '#8FB973' } },
+                    { value: 56, itemStyle: { color: '#6A9E69' } },
+                    { value: 244, itemStyle: { color: '#3A6B4C' } },
+                    { value: 393, itemStyle: { color: '#1E3F2B' } }
+                ],
+                itemStyle: { borderRadius: [0, 10, 10, 0] },
+                label: { show: true, position: 'right', formatter: '{c} 次', color: '#1E3F2B', fontWeight: 'bold' }
+            }]
+        });
+
+        // 4. Pain Chart
+        chartPain = echarts.init(document.getElementById('chartPain'));
+        chartPain.setOption({
+            tooltip: { ...tooltipStyle, trigger: 'axis', axisPointer: { type: 'cross' } },
+            legend: { data: ['痛点提及频次', '占痛点总声量比(%)'], bottom: 0, textStyle: { color: '#4A5D50' } },
+            grid: { left: '4%', right: '6%', top: '12%', bottom: '15%', containLabel: true },
+            xAxis: { type: 'category', data: ['库存少/秒空', '价格敏感(69/139)', '呼吁开预售', '聚酯纤维/静电', '黄牛溢价'], axisLabel: { color: '#233529', fontWeight: 'bold', fontSize: 11 } },
+            yAxis: [
+                { type: 'value', name: '频次(次)', splitLine: { lineStyle: { type: 'dashed', color: '#E6ECE4' } } },
+                { type: 'value', name: '占比(%)', max: 50, splitLine: { show: false }, axisLabel: { formatter: '{value}%' } }
+            ],
+            series: [
+                {
+                    name: '痛点提及频次', type: 'bar', barWidth: '42%',
+                    itemStyle: { color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ offset: 0, color: '#D49B54' }, { offset: 1, color: '#EBD0AA' }]), borderRadius: [8, 8, 0, 0] },
+                    label: { show: true, position: 'top', color: '#A36B26', fontWeight: 'bold' },
+                    data: [104, 81, 58, 47, 11]
+                },
+                {
+                    name: '占痛点总声量比(%)', type: 'line', yAxisIndex: 1, smooth: true, symbolSize: 8,
+                    lineStyle: { width: 3, color: '#2D5A3C' }, itemStyle: { color: '#2D5A3C', borderColor: '#FFF', borderWidth: 2 },
+                    data: [40.3, 31.4, 22.5, 18.2, 4.3]
+                }
+            ]
+        });
+
+        // 5. Show & Brand Chart
+        chartShowBrand = echarts.init(document.getElementById('chartShowBrand'));
+        chartShowBrand.setOption({
+            tooltip: { ...tooltipStyle, trigger: 'axis', axisPointer: { type: 'shadow' } },
+            grid: { left: '3%', right: '4%', top: '12%', bottom: '8%', containLabel: true },
+            xAxis: {
+                type: 'category',
+                data: [
+                    '许飞 & 厉娜\n(画地为牢名场面)',
+                    '999感冒灵品牌提及\n(暖心陪伴核心资产)',
+                    '金主眼光 & 大芒果格局\n(从爸爸去哪儿到慢综)',
+                    '青稚 & 白小纯\n(裹毯哭泣/雨伞倾斜出圈名场面)',
+                    '向日葵 & 小王子\n(节目治愈系细节美学)'
+                ],
+                axisLabel: { color: '#233529', fontWeight: 'bold', fontSize: 12 }
+            },
+            yAxis: { type: 'value', name: '声量热度 (提及次数)', splitLine: { lineStyle: { type: 'dashed', color: '#E6ECE4' } } },
+            series: [{
+                type: 'bar', barWidth: '38%',
+                data: [
+                    { value: 139, itemStyle: { color: '#6A92A4' } },
+                    { value: 110, itemStyle: { color: '#1E3F2B' } },
+                    { value: 79,  itemStyle: { color: '#3A6B4C' } },
+                    { value: 65,  itemStyle: { color: '#83A8B8' } },
+                    { value: 41,  itemStyle: { color: '#7FA96B' } }
+                ],
+                itemStyle: { borderRadius: [10, 10, 0, 0] },
+                label: { show: true, position: 'top', formatter: '{c} 次', color: '#233529', fontWeight: 'bold', fontSize: 13 }
+            }]
+        });
+    }
+
+    window.addEventListener('resize', resizeAllCharts);
+</script>
+
+</body>
+</html>
